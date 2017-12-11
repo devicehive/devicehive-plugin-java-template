@@ -5,9 +5,13 @@ import com.devicehive.proxy.payload.TopicSubscribePayload;
 
 public class ProxyMessageBuilder {
 
-//    public static ProxyMessage authenticate(AuthenticatePayload payload) {
-//
-//    }
+    public static ProxyMessage authenticate(AuthenticatePayload payload) {
+        return ProxyMessage.newBuilder()
+                .withType("plugin")
+                .withAction("authenticate")
+                .withPayload(payload)
+                .build();
+    }
 
     public static ProxyMessage subscribe(TopicSubscribePayload payload) {
         return ProxyMessage.newBuilder()

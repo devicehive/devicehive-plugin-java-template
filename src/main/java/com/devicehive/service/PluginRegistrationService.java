@@ -3,6 +3,7 @@ package com.devicehive.service;
 import com.devicehive.model.*;
 import com.devicehive.plugin.PluginService;
 import com.devicehive.proxy.ProxyMessageBuilder;
+import com.devicehive.proxy.payload.AuthenticatePayload;
 import com.devicehive.proxy.payload.TopicSubscribePayload;
 import com.devicehive.proxy.WebSocketKafkaProxyClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +39,7 @@ public class PluginRegistrationService {
         PluginRegistration pluginRegistration = registerPlugin();
 
         client.start(pluginRegistration.getProxyEndpoint(), pluginService);
+        client.push(ProxyMessageBuilder.authenticate(new AuthenticatePayload(pluginRegistration.getAccessToken()))).join();
         client.push(ProxyMessageBuilder.subscribe(new TopicSubscribePayload(pluginRegistration.getTopicName()))).join();
 
         return pluginRegistration;
