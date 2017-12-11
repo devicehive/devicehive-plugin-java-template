@@ -1,5 +1,6 @@
 package com.devicehive.configuration;
 
+import com.devicehive.model.PluginRegistration;
 import com.devicehive.service.PluginRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -18,6 +19,6 @@ public class PluginConfiguration {
 
     @EventListener(ApplicationReadyEvent.class)
     public void initPlugin() {
-        pluginRegistrationService.initPlugin();
+        PluginRegistration pluginRegistration = pluginRegistrationService.initAndRegisterPlugin();
     }
 }

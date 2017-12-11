@@ -1,12 +1,13 @@
 package com.devicehive.model;
 
-public class PluginRegistrationResponse {
+public class PluginRegistration {
 
     private String accessToken;
     private String refreshToken;
     private String proxyEndpoint;
+    private String topicName;
 
-    public PluginRegistrationResponse() {
+    public PluginRegistration() {
     }
 
     public String getAccessToken() {
@@ -31,5 +32,13 @@ public class PluginRegistrationResponse {
 
     public void setProxyEndpoint(String proxyEndpoint) {
         this.proxyEndpoint = proxyEndpoint;
+    }
+
+    public String getTopicName() {
+        return topicName;
+    }
+
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
     }
 }

@@ -1,12 +1,15 @@
 package com.devicehive.service;
 
 import com.devicehive.model.*;
+import com.devicehive.plugin.PluginService;
+import com.devicehive.proxy.ProxyMessageBuilder;
+import com.devicehive.proxy.payload.TopicSubscribePayload;
+import com.devicehive.proxy.WebSocketKafkaProxyClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,18 +21,26 @@ public class PluginRegistrationService {
 
     private final PluginInfoService pluginInfoService;
     private final Environment environment;
+    private final PluginService pluginService;
 
+    private WebSocketKafkaProxyClient client = new WebSocketKafkaProxyClient();
     private JwtToken userToken;
 
     @Autowired
-    public PluginRegistrationService(PluginInfoService pluginInfoService, Environment environment) {
+    public PluginRegistrationService(PluginInfoService pluginInfoService, Environment environment, PluginService pluginService) {
         this.pluginInfoService = pluginInfoService;
         this.environment = environment;
+        this.pluginService = pluginService;
     }
 
-    public void initPlugin() {
+    public PluginRegistration initAndRegisterPlugin() {
         userToken = getUserToken();
-        registerPlugin();
+        PluginRegistration pluginRegistration = registerPlugin();
+
+        client.start(pluginRegistration.getProxyEndpoint(), pluginService);
+        client.push(ProxyMessageBuilder.subscribe(new TopicSubscribePayload(pluginRegistration.getTopicName()))).join();
+
+        return pluginRegistration;
     }
 
     private JwtToken getUserToken() {
@@ -43,7 +54,7 @@ public class PluginRegistrationService {
         return restTemplate.postForObject(authEndpoint, authRequest, JwtToken.class);
     }
 
-    private void registerPlugin() {
+    private PluginRegistration registerPlugin() {
         String deviceIds = environment.getProperty("plugin.device-ids");
         String networkIds = environment.getProperty("plugin.network-ids");
         String names = environment.getProperty("plugin.names");
@@ -66,7 +77,7 @@ public class PluginRegistrationService {
 
         HttpEntity<PluginInfo> requestEntity = new HttpEntity<>(pluginInfoService.getPluginInfo(), headers);
 
-        ResponseEntity<PluginRegistrationResponse> response = restTemplate.postForEntity(registrationEndpoint, requestEntity, PluginRegistrationResponse.class, params);
-        response.getBody();
+        ResponseEntity<PluginRegistration> response = restTemplate.postForEntity(registrationEndpoint, requestEntity, PluginRegistration.class, params);
+        return response.getBody();
     }
 }

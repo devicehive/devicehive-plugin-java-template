@@ -15,6 +15,7 @@ public class PluginInfoService {
                              @Value("${server.address}") String serverAddress,
                              @Value("${server.port}") String serverPort) {
         String healthCheckUrl = "http://" + serverAddress + ":" + serverPort + "/" + healthCheckEndpoint;
+        name = name + System.currentTimeMillis();
         this.pluginInfo = new PluginInfo(name, description, healthCheckUrl);
     }
 
