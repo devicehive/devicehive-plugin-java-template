@@ -1,7 +1,7 @@
 package com.devicehive.proxy;
 
 import com.devicehive.proxy.payload.Payload;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.UUID;
 
@@ -9,16 +9,16 @@ public class ProxyMessage {
 
     private String id;
 
-    @JsonProperty("t")
+    @SerializedName("t")
     private String type;
 
-    @JsonProperty("a")
+    @SerializedName("a")
     private String action;
 
-    @JsonProperty("s")
+    @SerializedName("s")
     private Integer status;
 
-    @JsonProperty("p")
+    @SerializedName("p")
     private Payload payload;
 
     public ProxyMessage(String id, String type, String action, Integer status, Payload payload) {

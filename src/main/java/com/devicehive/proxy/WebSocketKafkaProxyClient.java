@@ -94,7 +94,7 @@ public class WebSocketKafkaProxyClient {
                 NotificationPayload payload = (NotificationPayload) message.getPayload();
                 messageHandler.handleMessage(payload.getValue());
             }
-            logger.debug("Message {} was received", message);
+            logger.info("Message {} was received", message);
         });
     }
 }

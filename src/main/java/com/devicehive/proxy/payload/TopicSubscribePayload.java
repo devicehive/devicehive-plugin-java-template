@@ -1,17 +1,16 @@
 package com.devicehive.proxy.payload;
 
-import com.devicehive.proxy.payload.Payload;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Collections;
 import java.util.List;
 
 public class TopicSubscribePayload implements Payload {
 
-    @JsonProperty("t")
+    @SerializedName("t")
     private List<String> topics;
 
-    @JsonProperty("consumer_group")
+    @SerializedName("consumer_group")
     private String consumerGroup = "request-consumer-group";
 
     public TopicSubscribePayload(List<String> topics) {
