@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
@@ -57,21 +58,26 @@ public class PluginRegistrationService {
     }
 
     private PluginRegistration registerPlugin() {
-        String deviceIds = environment.getProperty("plugin.device-ids");
+        String deviceId = environment.getProperty("plugin.device-id");
         String networkIds = environment.getProperty("plugin.network-ids");
+        String deviceTypeIds = environment.getProperty("plugin.device-type-ids");
         String names = environment.getProperty("plugin.names");
-        String timestamp = environment.getProperty("plugin.timestamp");
         boolean returnCommands = environment.getProperty("plugin.return-commands", Boolean.class);
         boolean returnUpdatedCommands = environment.getProperty("plugin.return-updated-commands", Boolean.class);
         boolean returnNotifications = environment.getProperty("plugin.return-notifications", Boolean.class);
 
         String registrationEndpoint = environment.getProperty("dh.endpoint.plugin");
 
-        PluginRegistrationRequest registrationRequest = new PluginRegistrationRequest(deviceIds, networkIds, names, timestamp,
-                returnCommands, returnUpdatedCommands, returnNotifications);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(registrationEndpoint);
+        if (deviceId != null) builder.queryParam("deviceId", deviceId);
+        if (networkIds != null) builder.queryParam("networkIds", networkIds);
+        if (deviceTypeIds != null) builder.queryParam("deviceTypeIds", deviceTypeIds);
+        if (names != null)  builder.queryParam("names", names);
 
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> params = mapper.convertValue(registrationRequest, Map.class);
+        builder
+                .queryParam("returnCommands", returnCommands)
+                .queryParam("returnUpdatedCommands", returnUpdatedCommands)
+                .queryParam("returnNotifications", returnNotifications);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -79,7 +85,7 @@ public class PluginRegistrationService {
 
         HttpEntity<PluginInfo> requestEntity = new HttpEntity<>(pluginInfoService.getPluginInfo(), headers);
 
-        ResponseEntity<PluginRegistration> response = restTemplate.postForEntity(registrationEndpoint, requestEntity, PluginRegistration.class, params);
+        ResponseEntity<PluginRegistration> response = restTemplate.postForEntity(builder.build().encode().toUri(), requestEntity, PluginRegistration.class);
         return response.getBody();
     }
 }

@@ -10,13 +10,9 @@ public class PluginInfoService {
     private final PluginInfo pluginInfo;
 
     public PluginInfoService(@Value("${plugin.name}") String name,
-                             @Value("${plugin.description}") String description,
-                             @Value("${plugin.health-check-endpoint}") String healthCheckEndpoint,
-                             @Value("${server.address}") String serverAddress,
-                             @Value("${server.port}") String serverPort) {
-        String healthCheckUrl = "http://" + serverAddress + ":" + serverPort + "/" + healthCheckEndpoint;
+                             @Value("${plugin.description}") String description) {
         name = name + System.currentTimeMillis();
-        this.pluginInfo = new PluginInfo(name, description, healthCheckUrl);
+        this.pluginInfo = new PluginInfo(name, description);
     }
 
     public PluginInfo getPluginInfo() {
