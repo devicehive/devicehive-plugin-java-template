@@ -10,6 +10,9 @@ public class PluginService implements DhMessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginService.class);
 
+    /*
+    Custom plugin logic goes here
+     */
     public void handleMessage(String message) {
         logger.info("Message received: {}", message);
     }
