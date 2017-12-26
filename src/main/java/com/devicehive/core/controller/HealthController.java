@@ -19,7 +19,7 @@ public class HealthController {
         this.pluginInfo = this.pluginInfoService.getPluginInfo();
     }
 
-    @GetMapping(value = "${plugin.health-check-endpoint}")
+    @GetMapping(value = "${plugin.health-check-endpoint:health}")
     public PluginHealth getPluginHealth() {
         return new PluginHealth(pluginInfo, true);
     }
