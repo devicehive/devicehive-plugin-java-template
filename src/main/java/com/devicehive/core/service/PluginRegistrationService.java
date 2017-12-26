@@ -1,10 +1,10 @@
-package com.devicehive.pluginmanagement.service;
+package com.devicehive.core.service;
 
-import com.devicehive.pluginmanagement.model.*;
+import com.devicehive.core.model.*;
 import com.devicehive.plugin.PluginService;
-import com.devicehive.pluginmanagement.proxy.ProxyMessageBuilder;
-import com.devicehive.pluginmanagement.proxy.payload.TopicSubscribePayload;
-import com.devicehive.pluginmanagement.proxy.WebSocketKafkaProxyClient;
+import com.devicehive.core.proxy.ProxyMessageBuilder;
+import com.devicehive.core.proxy.payload.TopicSubscribePayload;
+import com.devicehive.core.proxy.WebSocketKafkaProxyClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;

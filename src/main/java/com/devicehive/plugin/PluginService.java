@@ -1,6 +1,6 @@
 package com.devicehive.plugin;
 
-import com.devicehive.pluginmanagement.proxy.DhMessageHandler;
+import com.devicehive.core.proxy.DhMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

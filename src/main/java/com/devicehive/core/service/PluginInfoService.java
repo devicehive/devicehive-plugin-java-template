@@ -1,6 +1,6 @@
-package com.devicehive.pluginmanagement.service;
+package com.devicehive.core.service;
 
-import com.devicehive.pluginmanagement.model.PluginInfo;
+import com.devicehive.core.model.PluginInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

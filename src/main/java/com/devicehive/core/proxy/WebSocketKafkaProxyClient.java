@@ -1,6 +1,6 @@
-package com.devicehive.pluginmanagement.proxy;
+package com.devicehive.core.proxy;
 
-import com.devicehive.pluginmanagement.proxy.payload.NotificationPayload;
+import com.devicehive.core.proxy.payload.NotificationPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,6 @@
-package com.devicehive.pluginmanagement.configuration;
+package com.devicehive.core.configuration;
 
-import com.devicehive.pluginmanagement.service.PluginRegistrationService;
+import com.devicehive.core.service.PluginRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;

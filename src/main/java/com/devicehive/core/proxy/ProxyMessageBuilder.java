@@ -1,7 +1,7 @@
-package com.devicehive.pluginmanagement.proxy;
+package com.devicehive.core.proxy;
 
-import com.devicehive.pluginmanagement.proxy.payload.AuthenticatePayload;
-import com.devicehive.pluginmanagement.proxy.payload.TopicSubscribePayload;
+import com.devicehive.core.proxy.payload.AuthenticatePayload;
+import com.devicehive.core.proxy.payload.TopicSubscribePayload;
 
 public class ProxyMessageBuilder {
 

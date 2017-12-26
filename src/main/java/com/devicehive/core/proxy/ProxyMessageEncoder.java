@@ -1,4 +1,4 @@
-package com.devicehive.pluginmanagement.proxy;
+package com.devicehive.core.proxy;
 
 import com.google.gson.Gson;
 

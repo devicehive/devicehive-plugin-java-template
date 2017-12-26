@@ -1,4 +1,4 @@
-package com.devicehive.pluginmanagement.model;
+package com.devicehive.core.model;
 
 public class PluginRegistration {
 

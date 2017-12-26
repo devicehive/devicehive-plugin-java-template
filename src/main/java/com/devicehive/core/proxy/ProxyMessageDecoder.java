@@ -1,10 +1,9 @@
-package com.devicehive.pluginmanagement.proxy;
+package com.devicehive.core.proxy;
 
-import com.devicehive.pluginmanagement.proxy.payload.HealthPayload;
-import com.devicehive.pluginmanagement.proxy.payload.NotificationPayload;
+import com.devicehive.core.proxy.payload.HealthPayload;
+import com.devicehive.core.proxy.payload.NotificationPayload;
 import com.google.gson.*;
 
-import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 import java.util.ArrayList;

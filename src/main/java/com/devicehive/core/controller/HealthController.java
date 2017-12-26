@@ -1,8 +1,8 @@
-package com.devicehive.pluginmanagement.controller;
+package com.devicehive.core.controller;
 
-import com.devicehive.pluginmanagement.model.PluginHealth;
-import com.devicehive.pluginmanagement.model.PluginInfo;
-import com.devicehive.pluginmanagement.service.PluginInfoService;
+import com.devicehive.core.model.PluginHealth;
+import com.devicehive.core.model.PluginInfo;
+import com.devicehive.core.service.PluginInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

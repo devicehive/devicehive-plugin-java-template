@@ -1,6 +1,6 @@
-package com.devicehive.pluginmanagement.proxy;
+package com.devicehive.core.proxy;
 
-import com.devicehive.pluginmanagement.proxy.payload.Payload;
+import com.devicehive.core.proxy.payload.Payload;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.UUID;

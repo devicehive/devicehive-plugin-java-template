@@ -1,4 +1,4 @@
-package com.devicehive.pluginmanagement.proxy.payload;
+package com.devicehive.core.proxy.payload;
 
 public class HealthPayload implements Payload {
 
