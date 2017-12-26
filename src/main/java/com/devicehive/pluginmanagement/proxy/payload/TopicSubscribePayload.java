@@ -1,4 +1,4 @@
-package com.devicehive.proxy.payload;
+package com.devicehive.pluginmanagement.proxy.payload;
 
 import com.google.gson.annotations.SerializedName;
 

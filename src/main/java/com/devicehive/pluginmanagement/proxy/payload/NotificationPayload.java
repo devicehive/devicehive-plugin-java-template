@@ -1,6 +1,4 @@
-package com.devicehive.proxy.payload;
-
-import com.devicehive.proxy.payload.Payload;
+package com.devicehive.pluginmanagement.proxy.payload;
 
 public class NotificationPayload implements Payload {
 

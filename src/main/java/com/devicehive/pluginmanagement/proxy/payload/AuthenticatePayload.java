@@ -1,4 +1,4 @@
-package com.devicehive.proxy.payload;
+package com.devicehive.pluginmanagement.proxy.payload;
 
 public class AuthenticatePayload implements Payload {
 

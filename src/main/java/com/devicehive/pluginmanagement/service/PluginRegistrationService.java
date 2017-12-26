@@ -1,12 +1,10 @@
-package com.devicehive.service;
+package com.devicehive.pluginmanagement.service;
 
-import com.devicehive.model.*;
+import com.devicehive.pluginmanagement.model.*;
 import com.devicehive.plugin.PluginService;
-import com.devicehive.proxy.ProxyMessageBuilder;
-import com.devicehive.proxy.payload.AuthenticatePayload;
-import com.devicehive.proxy.payload.TopicSubscribePayload;
-import com.devicehive.proxy.WebSocketKafkaProxyClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.devicehive.pluginmanagement.proxy.ProxyMessageBuilder;
+import com.devicehive.pluginmanagement.proxy.payload.TopicSubscribePayload;
+import com.devicehive.pluginmanagement.proxy.WebSocketKafkaProxyClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -15,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Map;
 
 @Service
 public class PluginRegistrationService {

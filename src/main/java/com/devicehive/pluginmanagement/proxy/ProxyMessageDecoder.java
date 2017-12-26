@@ -1,14 +1,12 @@
-package com.devicehive.proxy;
+package com.devicehive.pluginmanagement.proxy;
 
-import com.devicehive.proxy.payload.HealthPayload;
-import com.devicehive.proxy.payload.NotificationPayload;
+import com.devicehive.pluginmanagement.proxy.payload.HealthPayload;
+import com.devicehive.pluginmanagement.proxy.payload.NotificationPayload;
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +17,7 @@ public class ProxyMessageDecoder implements Decoder.Text<List<ProxyMessage>> {
     private static final Gson gson = new Gson();
 
     @Override
-    public List<ProxyMessage> decode(String s) throws DecodeException {
+    public List<ProxyMessage> decode(String s) {
         JsonElement object = parser.parse(s);
         if (object instanceof JsonArray) {
             List<ProxyMessage> list = new ArrayList<>();
@@ -64,7 +62,7 @@ public class ProxyMessageDecoder implements Decoder.Text<List<ProxyMessage>> {
                 .withType(t.getAsString())
                 .withAction(a != null ? a.getAsString() : null)
                 .withStatus(object.get("s") != null ? object.get("s").getAsInt() : null);
-        Type listType = new TypeToken<List<String>>() {}.getType();
+
         if (object.get("p") != null) {
             switch (type) {
                 case "notif":

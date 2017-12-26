@@ -1,6 +1,6 @@
-package com.devicehive.service;
+package com.devicehive.pluginmanagement.service;
 
-import com.devicehive.model.PluginInfo;
+import com.devicehive.pluginmanagement.model.PluginInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,6 @@ public class PluginInfoService {
 
     public PluginInfoService(@Value("${plugin.name}") String name,
                              @Value("${plugin.description}") String description) {
-        name = name + System.currentTimeMillis();
         this.pluginInfo = new PluginInfo(name, description);
     }
 

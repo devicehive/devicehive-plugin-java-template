@@ -1,4 +1,4 @@
-package com.devicehive.model;
+package com.devicehive.pluginmanagement.model;
 
 public class UserAuthRequest {
 
