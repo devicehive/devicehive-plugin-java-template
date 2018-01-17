@@ -3,10 +3,10 @@ package com.devicehive.core.service;
 import com.devicehive.core.model.*;
 import com.devicehive.plugin.PluginService;
 import com.devicehive.core.proxy.ProxyMessageBuilder;
-import com.devicehive.core.proxy.payload.TopicSubscribePayload;
+import com.devicehive.core.proxy.payload.TopicsPayload;
 import com.devicehive.core.proxy.WebSocketKafkaProxyClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,57 +18,95 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PluginRegistrationService {
 
     private final PluginInfoService pluginInfoService;
-    private final Environment environment;
     private final PluginService pluginService;
 
     private WebSocketKafkaProxyClient client = new WebSocketKafkaProxyClient();
-    private JwtToken userToken;
+
+    @Value("${dh.endpoint.auth}")
+    private String authEndpoint;
+
+    @Value("${dh.endpoint.plugin}")
+    private String registrationEndpoint;
+
+    @Value("${dh.user.login:}")
+    private String login;
+
+    @Value("${dh.user.password:}")
+    private String password;
+
+    @Value("${plugin.refresh-token:}")
+    private String refreshToken;
+
+    @Value("${plugin.proxy-endpoint:}")
+    private String proxyEndpoint;
+
+    @Value("${plugin.topic-name:}")
+    private String topicName;
+
+    @Value("${plugin.device-id:}")
+    private String deviceId;
+
+    @Value("${plugin.network-ids:}")
+    private String networkIds;
+
+    @Value("${plugin.device-type-ids:}")
+    private String deviceTypeIds;
+
+    @Value("${plugin.names:}")
+    private String names;
+
+    @Value("${plugin.return-commands:}")
+    private boolean returnCommands;
+
+    @Value("${plugin.return-updated-commands:}")
+    private boolean returnUpdatedCommands;
+
+    @Value("${plugin.return-notifications:}")
+    private boolean returnNotifications;
 
     @Autowired
-    public PluginRegistrationService(PluginInfoService pluginInfoService, Environment environment, PluginService pluginService) {
+    public PluginRegistrationService(PluginInfoService pluginInfoService, PluginService pluginService) {
         this.pluginInfoService = pluginInfoService;
-        this.environment = environment;
         this.pluginService = pluginService;
     }
 
     public PluginRegistration initAndRegisterPlugin() {
-        userToken = getUserToken();
-        PluginRegistration pluginRegistration = registerPlugin();
+        PluginRegistration pluginRegistration;
+        if (!refreshToken.isEmpty() && !proxyEndpoint.isEmpty() && !topicName.isEmpty()) {
+            pluginRegistration = new PluginRegistration(getPluginAccessToken(), refreshToken, proxyEndpoint, topicName);
+        } else if (!login.isEmpty() && !password.isEmpty()) {
+            String accessToken = getUserAccessToken();
+            pluginRegistration = registerPlugin(accessToken);
+        } else {
+            throw new RuntimeException("Plugin config must contain either login and password, or plugin refresh token, proxy endpoint and topic name");
+        }
 
         client.start(pluginRegistration.getProxyEndpoint(), pluginService);
-//        client.push(ProxyMessageBuilder.authenticate(new AuthenticatePayload(pluginRegistration.getAccessToken()))).join();
-        client.push(ProxyMessageBuilder.subscribe(new TopicSubscribePayload(pluginRegistration.getTopicName()))).join();
+        client.push(ProxyMessageBuilder.subscribe(new TopicsPayload(pluginRegistration.getTopicName()))).join();
 
         return pluginRegistration;
     }
 
-    private JwtToken getUserToken() {
-        String login = environment.getProperty("dh.user.login");
-        String password = environment.getProperty("dh.user.password");
-        String authEndpoint = environment.getProperty("dh.endpoint.auth");
-
-        UserAuthRequest authRequest = new UserAuthRequest(login, password);
+    private String getUserAccessToken() {
+        PasswordAuthRequest authRequest = new PasswordAuthRequest(login, password);
 
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForObject(authEndpoint, authRequest, JwtToken.class);
+        return restTemplate.postForObject(authEndpoint, authRequest, JwtToken.class).getAccessToken();
     }
 
-    private PluginRegistration registerPlugin() {
-        String deviceId = environment.getProperty("plugin.device-id");
-        String networkIds = environment.getProperty("plugin.network-ids");
-        String deviceTypeIds = environment.getProperty("plugin.device-type-ids");
-        String names = environment.getProperty("plugin.names");
-        boolean returnCommands = environment.getProperty("plugin.return-commands", Boolean.class);
-        boolean returnUpdatedCommands = environment.getProperty("plugin.return-updated-commands", Boolean.class);
-        boolean returnNotifications = environment.getProperty("plugin.return-notifications", Boolean.class);
+    private String getPluginAccessToken() {
+        TokenAuthRequest authRequest = new TokenAuthRequest(refreshToken);
 
-        String registrationEndpoint = environment.getProperty("dh.endpoint.plugin");
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.postForObject(authEndpoint + "/refresh", authRequest, JwtToken.class).getAccessToken();
+    }
 
+    private PluginRegistration registerPlugin(String accessToken) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(registrationEndpoint);
-        if (deviceId != null) builder.queryParam("deviceId", deviceId);
-        if (networkIds != null) builder.queryParam("networkIds", networkIds);
-        if (deviceTypeIds != null) builder.queryParam("deviceTypeIds", deviceTypeIds);
-        if (names != null)  builder.queryParam("names", names);
+        if (!deviceId.isEmpty()) builder.queryParam("deviceId", deviceId);
+        if (!networkIds.isEmpty()) builder.queryParam("networkIds", networkIds);
+        if (!deviceTypeIds.isEmpty()) builder.queryParam("deviceTypeIds", deviceTypeIds);
+        if (!names.isEmpty())  builder.queryParam("names", names);
 
         builder
                 .queryParam("returnCommands", returnCommands)
@@ -77,7 +115,7 @@ public class PluginRegistrationService {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + userToken.getAccessToken());
+        headers.set("Authorization", "Bearer " + accessToken);
 
         HttpEntity<PluginInfo> requestEntity = new HttpEntity<>(pluginInfoService.getPluginInfo(), headers);
 

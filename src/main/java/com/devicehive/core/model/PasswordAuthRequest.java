@@ -1,11 +1,11 @@
 package com.devicehive.core.model;
 
-public class UserAuthRequest {
+public class PasswordAuthRequest {
 
     private String login;
     private String password;
 
-    public UserAuthRequest(String login, String password) {
+    public PasswordAuthRequest(String login, String password) {
         this.login = login;
         this.password = password;
     }

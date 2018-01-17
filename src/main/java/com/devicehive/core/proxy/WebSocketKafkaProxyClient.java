@@ -1,6 +1,6 @@
 package com.devicehive.core.proxy;
 
-import com.devicehive.core.proxy.payload.NotificationPayload;
+import com.devicehive.core.proxy.payload.MessagePayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +20,13 @@ public class WebSocketKafkaProxyClient {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketKafkaProxyClient.class);
 
     private Map<String, CompletableFuture<ProxyMessage>> futureMap;
-    private Map<String, Boolean> ackReceived;
     private Session session;
     private DhMessageHandler messageHandler;
 
     public void start(String uri, DhMessageHandler messageHandler) {
         this.messageHandler = messageHandler;
         try {
+            this.futureMap = new ConcurrentHashMap<>();
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, new URI("ws://" + uri));
         } catch (Exception e) {
@@ -55,8 +55,6 @@ public class WebSocketKafkaProxyClient {
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
-        this.futureMap = new ConcurrentHashMap<>();
-        this.ackReceived = new ConcurrentHashMap<>();
         logger.info("New WebSocket session established: {}", session.getId());
     }
 
@@ -65,34 +63,28 @@ public class WebSocketKafkaProxyClient {
         logger.info("WebSocket session {} closed, close code {}", session.getId(), reason.getCloseCode());
         this.session = null;
         futureMap.clear();
-        ackReceived.clear();
     }
 
     @OnMessage
     public void onMessage(List<ProxyMessage> messages) {
         messages.forEach(message -> {
+            if (message.getStatus() == null || message.getStatus() != 0) {
+                MessagePayload payload = (MessagePayload) message.getPayload();
+                String msg = "Response message is failed: " + payload.getMessage();
+                logger.warn(msg);
+                throw new RuntimeException(msg);
+            }
+
             String id = message.getId();
             CompletableFuture<ProxyMessage> future = futureMap.get(id);
             if (future != null) {
-                if ("ack".equals(message.getType())) {
-                    if (message.getStatus() != 0) {
-                        throw new RuntimeException("Acknowledgement failed for request id " + id);
-                    }
-                    ackReceived.put(id, true);
-                    logger.debug("Acknowledgement message {} received for request id {}", message, id);
-                } else {
-                    if (!ackReceived.getOrDefault(id, false)) {
-                        throw new RuntimeException("No acknowledgement received for request id " + id);
-                    }
-                    future.complete(message);
-                    futureMap.remove(id);
-                    ackReceived.remove(id);
-                }
+                future.complete(message);
+                futureMap.remove(id);
             }
 
             if ("notif".equals(message.getType()) && message.getAction() == null) {
-                NotificationPayload payload = (NotificationPayload) message.getPayload();
-                messageHandler.handleMessage(payload.getValue());
+                MessagePayload payload = (MessagePayload) message.getPayload();
+                messageHandler.handleMessage(payload.getMessage());
             }
             logger.info("Message {} was received", message);
         });

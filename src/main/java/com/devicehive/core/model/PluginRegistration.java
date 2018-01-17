@@ -7,6 +7,13 @@ public class PluginRegistration {
     private String proxyEndpoint;
     private String topicName;
 
+    public PluginRegistration(String accessToken, String refreshToken, String proxyEndpoint, String topicName) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.proxyEndpoint = proxyEndpoint;
+        this.topicName = topicName;
+    }
+
     public PluginRegistration() {
     }
 

@@ -21,7 +21,7 @@ public class ProxyMessage {
     @SerializedName("p")
     private Payload payload;
 
-    public ProxyMessage(String id, String type, String action, Integer status, Payload payload) {
+    private ProxyMessage(String id, String type, String action, Integer status, Payload payload) {
         this.id = id;
         this.type = type;
         this.action = action;

@@ -1,19 +1,10 @@
 package com.devicehive.core.proxy;
 
-import com.devicehive.core.proxy.payload.AuthenticatePayload;
-import com.devicehive.core.proxy.payload.TopicSubscribePayload;
+import com.devicehive.core.proxy.payload.TopicsPayload;
 
 public class ProxyMessageBuilder {
 
-    public static ProxyMessage authenticate(AuthenticatePayload payload) {
-        return ProxyMessage.newBuilder()
-                .withType("plugin")
-                .withAction("authenticate")
-                .withPayload(payload)
-                .build();
-    }
-
-    public static ProxyMessage subscribe(TopicSubscribePayload payload) {
+    public static ProxyMessage subscribe(TopicsPayload payload) {
         return ProxyMessage.newBuilder()
                 .withType("topic")
                 .withAction("subscribe")

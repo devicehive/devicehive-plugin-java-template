@@ -1,7 +1,7 @@
 package com.devicehive.core.proxy;
 
 import com.devicehive.core.proxy.payload.HealthPayload;
-import com.devicehive.core.proxy.payload.NotificationPayload;
+import com.devicehive.core.proxy.payload.MessagePayload;
 import com.google.gson.*;
 
 import javax.websocket.Decoder;
@@ -56,20 +56,25 @@ public class ProxyMessageDecoder implements Decoder.Text<List<ProxyMessage>> {
             type += "/" + a.getAsString();
         }
 
+        Integer status = object.get("s") != null ? object.get("s").getAsInt() : null;
         ProxyMessage.Builder decoded = ProxyMessage.newBuilder()
-                .withId(object.get("id") != null ? object.get("id").getAsString() : null)
+                .withId(object.get("id") != null ? object.get("id").getAsString() : "")
                 .withType(t.getAsString())
                 .withAction(a != null ? a.getAsString() : null)
-                .withStatus(object.get("s") != null ? object.get("s").getAsInt() : null);
+                .withStatus(status);
 
         if (object.get("p") != null) {
-            switch (type) {
-                case "notif":
-                    decoded.withPayload(new NotificationPayload(gson.fromJson(object.get("p"), String.class)));
-                    break;
-                case "health":
-                    decoded.withPayload(gson.fromJson(object.get("p"), HealthPayload.class));
-                    break;
+            if (status != null && status == 0) {
+                switch (type) {
+                    case "notif":
+                        decoded.withPayload(gson.fromJson(object.get("p"), MessagePayload.class));
+                        break;
+                    case "health":
+                        decoded.withPayload(gson.fromJson(object.get("p"), HealthPayload.class));
+                        break;
+                }
+            } else {
+                decoded.withPayload(gson.fromJson(object.get("p"), MessagePayload.class));
             }
         }
         return decoded.build();

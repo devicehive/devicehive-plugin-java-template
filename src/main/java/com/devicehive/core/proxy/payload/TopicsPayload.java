@@ -5,19 +5,16 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Collections;
 import java.util.List;
 
-public class TopicSubscribePayload implements Payload {
+public class TopicsPayload implements Payload {
 
     @SerializedName("t")
     private List<String> topics;
 
-    @SerializedName("consumer_group")
-    private String consumerGroup = "request-consumer-group";
-
-    public TopicSubscribePayload(List<String> topics) {
+    public TopicsPayload(List<String> topics) {
         this.topics = topics;
     }
 
-    public TopicSubscribePayload(String topic) {
+    public TopicsPayload(String topic) {
         this.topics = Collections.singletonList(topic);
     }
 
@@ -29,19 +26,10 @@ public class TopicSubscribePayload implements Payload {
         this.topics = topics;
     }
 
-    public String getConsumerGroup() {
-        return consumerGroup;
-    }
-
-    public void setConsumerGroup(String consumerGroup) {
-        this.consumerGroup = consumerGroup;
-    }
-
     @Override
     public String toString() {
-        return "TopicSubscribePayload{" +
+        return "TopicsPayload{" +
                 "topics=" + topics +
-                ", consumerGroup='" + consumerGroup + '\'' +
                 '}';
     }
 }
