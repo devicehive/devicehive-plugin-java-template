@@ -8,11 +8,17 @@ These configuration options are required for the plugin to properly start and co
 * server.port - Plugin HTTP port.
 * dh.user.login - Login for DeviceHive user.
 * dh.user.password - Password for DeviceHive user.
+* plugin.refresh-token - JWT refresh token (given during plugin registration)
+* plugin.proxy-endpoint - Endpoint for plugin proxy server (given during plugin registration)
+* plugin.topic-name - Name of topic that was created for the plugin (given during plugin registration)
 * dh.endpoint.auth - Endpoint where the DeviceHive Authentication server can be reached.
 * dh.endpoint.plugin - Endpoint where the DeviceHive Plugin Management server can be reached.
 * plugin.name - Name of the plugin. Must be unique.
 * plugin.description - Short description of the plugin.
 * plugin.health-check-endpoint - name of the healthcheck endpoint that the plugin should expose (default is `health`)
+
+The configuration must contain either dh.user.login and dh.user.password, or plugin.refresh-token, plugin.proxy-endpoint
+and plugin.topic-name. If both are present, the latter will be used.
 
 The following configuration options allow us to configure which messages from the server should the plugin listen to:
 * plugin.device-id - Device GUID.
