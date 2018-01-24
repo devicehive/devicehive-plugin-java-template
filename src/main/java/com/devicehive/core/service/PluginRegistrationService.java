@@ -1,9 +1,12 @@
 package com.devicehive.core.service;
 
 import com.devicehive.core.model.*;
+import com.devicehive.core.proxy.ProxyMessage;
+import com.devicehive.core.proxy.payload.AuthenticateRequestPayload;
+import com.devicehive.core.proxy.payload.AuthenticateResponsePayload;
 import com.devicehive.plugin.PluginService;
 import com.devicehive.core.proxy.ProxyMessageBuilder;
-import com.devicehive.core.proxy.payload.TopicsPayload;
+import com.devicehive.core.proxy.payload.SubscribePayload;
 import com.devicehive.core.proxy.WebSocketKafkaProxyClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,7 +85,10 @@ public class PluginRegistrationService {
         }
 
         client.start(pluginRegistration.getProxyEndpoint(), pluginService);
-        client.push(ProxyMessageBuilder.subscribe(new TopicsPayload(pluginRegistration.getTopicName()))).join();
+        ProxyMessage authentication = client.push(ProxyMessageBuilder.authenticate(new AuthenticateRequestPayload(pluginRegistration.getAccessToken()))).join();
+        AuthenticateResponsePayload payload = (AuthenticateResponsePayload) authentication.getPayload();
+        String newTopicName = payload.getTopicName();
+        client.push(ProxyMessageBuilder.subscribe(new SubscribePayload(newTopicName))).join();
 
         return pluginRegistration;
     }

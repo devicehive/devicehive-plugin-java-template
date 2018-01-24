@@ -1,5 +1,6 @@
 package com.devicehive.core.proxy;
 
+import com.devicehive.core.proxy.payload.AuthenticateResponsePayload;
 import com.devicehive.core.proxy.payload.HealthPayload;
 import com.devicehive.core.proxy.payload.MessagePayload;
 import com.google.gson.*;
@@ -68,6 +69,9 @@ public class ProxyMessageDecoder implements Decoder.Text<List<ProxyMessage>> {
                 switch (type) {
                     case "notif":
                         decoded.withPayload(gson.fromJson(object.get("p"), MessagePayload.class));
+                        break;
+                    case "plugin/authenticate":
+                        decoded.withPayload(gson.fromJson(object.get("p"), AuthenticateResponsePayload.class));
                         break;
                     case "health":
                         decoded.withPayload(gson.fromJson(object.get("p"), HealthPayload.class));
